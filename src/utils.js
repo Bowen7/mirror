@@ -1,4 +1,4 @@
-const genSrcAndDist = (data) => {
+const genSrcAndDest = (data) => {
   const dataInt8 = new Uint8ClampedArray(data.buffer)
   const simpleChannelLength = dataInt8.length / 4
   const r = new Uint8ClampedArray(simpleChannelLength)
@@ -15,7 +15,7 @@ const genSrcAndDist = (data) => {
     _b[i] = b[i] = dataInt8[i * 4 + 2]
     _a[i] = a[i] = dataInt8[i * 4 + 3]
   }
-  return { src: [r, g, b, a], dist: [_r, _g, _b, _a] }
+  return { src: [r, g, b, a], dest: [_r, _g, _b, _a] }
 }
 
 const mergeChannels = ([r, g, b, a]) => {
@@ -30,4 +30,4 @@ const mergeChannels = ([r, g, b, a]) => {
   return Buffer.from(data)
 }
 
-module.exports = { genSrcAndDist, mergeChannels }
+module.exports = { genSrcAndDest, mergeChannels }

@@ -1,25 +1,21 @@
-const { genSrcAndDist, mergeChannels } = require('../utils')
-function gaussian (data, width, height, radius) {
-  const { src, dist } = genSrcAndDist(data)
-  const rs = Math.ceil(radius * 2.57)
-  for (let index = 0; index < 3; index++) {
-    for (let i = 0; i < height; i++) {
-      for (let j = 0; j < width; j++) {
-        let val = 0
-        let wsum = 0
-        for (let iy = i - rs; iy < i + rs + 1; iy++) {
-          for (let ix = j - rs; ix < j + rs + 1; ix++) {
-            const x = Math.min(width - 1, Math.max(0, ix))
-            const y = Math.min(height - 1, Math.max(0, iy))
-            const dsq = (ix - j) * (ix - j) + (iy - i) * (iy - i)
-            const wght = Math.exp(-dsq / (2 * radius * radius)) / (Math.PI * 2 * radius * radius)
-            val += src[index][y * width + x] * wght; wsum += wght
-          }
+function gaussian (src, dest, width, height, sigma) {
+  const radius = Math.round(sigma * 3) // kernel size
+  for (let i = 0; i < width; i++) {
+    for (let j = 0; j < height; j++) {
+      let accumulation = 0
+      let weightSum = 0
+      for (let dx = -radius; dx <= radius; dx++) {
+        for (let dy = -radius; dy <= radius; dy++) {
+          const x = Math.min(width - 1, Math.max(0, i + dx))
+          const y = Math.min(height - 1, Math.max(0, j + dy))
+          // calc weight
+          const weight = Math.exp(-(Math.pow(dx, 2) + Math.pow(dy, 2)) / (2 * Math.pow(sigma, 2))) / (Math.PI * 2 * Math.pow(sigma, 2))
+          accumulation += src[y * width + x] * weight
+          weightSum += weight
         }
-        dist[index][i * width + j] = Math.round(val / wsum)
       }
+      dest[j * width + i] = Math.round(accumulation / weightSum)
     }
   }
-  return mergeChannels(dist)
 }
 module.exports = gaussian
