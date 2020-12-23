@@ -1,4 +1,4 @@
-function gaussian (src, dest, width, height, sigma) {
+function gaussianBlur (src, dest, width, height, sigma) {
   const radius = Math.round(sigma * 3) // kernel size
   for (let i = 0; i < width; i++) {
     for (let j = 0; j < height; j++) {
@@ -18,4 +18,4 @@ function gaussian (src, dest, width, height, sigma) {
     }
   }
 }
-module.exports = gaussian
+module.exports = gaussianBlur

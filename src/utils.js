@@ -30,4 +30,20 @@ const mergeChannels = ([r, g, b, a]) => {
   return Buffer.from(data)
 }
 
-module.exports = { genSrcAndDest, mergeChannels }
+function genBoxesForGaussian (sigma, n) {
+  const wIdeal = Math.sqrt(12 * Math.pow(sigma, 2) / n + 1)
+  let wl = Math.floor(wIdeal)
+  if (wl % 2 === 0) {
+    wl--
+  }
+  const wu = wl + 2
+  let m = (12 * Math.pow(sigma, 2) - n * Math.pow(wl, 2) - 4 * n * wl - 3 * n) / (-4 * wl - 4)
+  m = Math.round(m)
+  const sizes = []
+  for (let i = 0; i < n; i++) {
+    sizes.push(i < m ? wl : wu)
+  }
+  return sizes
+}
+
+module.exports = { genSrcAndDest, mergeChannels, genBoxesForGaussian }
